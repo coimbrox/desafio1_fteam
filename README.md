@@ -10,7 +10,7 @@ personagens com navegação para uma tela de detalhes.
 O objetivo das mudanças recentes foi manter a aplicação simples, legível e
 fácil de explicar seguindo um padrão MVVM leve.
 
-## Arquitetura (MVVM) — resumo em poucas linhas
+## Arquitetura (MVVM)
 
 - Model: `lib/shared/models/character.model.dart` — representa os dados retornados
 	pela API.
@@ -32,19 +32,6 @@ fácil de explicar seguindo um padrão MVVM leve.
 Essa separação mantém a lógica (requisições, tratamento de erro e estado)
 fora das widgets, o que facilita testes e explicação do fluxo.
 
-## Alterações principais deste commit
-
-- Estrutura de pastas organizada para seguir MVVM (views dentro de `view/`).
-- Adicionado campo de busca por nome e paginação/scroll infinito na Home.
-- `DetailsPage` ampliada para exibir mais informações do personagem.
-- `CharacterService` atualizado para aceitar parâmetros `page` e `name`.
-- `HomeViewModel` implementa lógica de paginação, busca e estados (loading/error).
-- Arquivos e exports limpos; removidos helpers/arquivos não utilizados.
-- `lib/config/app.config.dart` preenchido com `AppConfig` simples.
-- Adicionados testes:
-	- `test/models_test.dart` — testes unitários de parsing JSON (models/api response).
-	- `test/widget_test.dart` — testes de widget para `CardCharacterWidget` e
-		`DetailsPage`.
 
 ## Como rodar os testes
 
@@ -64,11 +51,6 @@ flutter test --coverage
 
 - O `appConfig` está disponível em `lib/config/app.config.dart` e pode ser usado
 	para controlar comportamentos por ambiente (ex.: `appConfig.showDebugBanner`).
-- Se desejar, posso migrar a injeção de dependências do `HomeViewModel` para
-	`riverpod` (já incluso no `pubspec.yaml`) para tornar os testes do ViewModel
-	mais isolados e fáceis de mockar.
-
-
 
 ## Como executar (Windows / PowerShell)
 
