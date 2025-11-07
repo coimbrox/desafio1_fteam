@@ -1,16 +1,91 @@
 # desafio1_fteam
 
-A new Flutter project.
+Projeto de demonstração Flutter para o desafio (Rick & Morty).
 
-## Getting Started
+## Introdução rápida
 
-This project is a starting point for a Flutter application.
+Este projeto consome a API pública do Rick and Morty e exibe uma lista de
+personagens com navegação para uma tela de detalhes.
 
-A few resources to get you started if this is your first Flutter project:
+O objetivo das mudanças recentes foi manter a aplicação simples, legível e
+fácil de explicar seguindo um padrão MVVM leve.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Arquitetura (MVVM) — resumo em poucas linhas
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Model: `lib/shared/models/character.model.dart` — representa os dados retornados
+	pela API.
+- Service: `lib/shared/services/character.service.dart` — faz as requisições HTTP
+	para `https://rickandmortyapi.com/api/character` (suporta `page` e `name`) e
+	retorna um `ApiResponse`.
+- ViewModel: `lib/features/home/viewmodel/home.viewmodel.dart` — responsável por
+	buscar os dados, controlar paginação/busca e expor `loading`, `error` e
+	`characters` para a view.
+- Views (agora organizadas em `view/`):
+	- `lib/features/home/view/home.page.dart` — tela que lista os personagens,
+		com campo de busca e scroll infinito. Consome `HomeViewModel`.
+	- `lib/shared/widgets/card_character.widget.dart` — cartão de personagem que
+		mostra imagem e nome; ao tocar, abre a tela de detalhes.
+	- `lib/features/details/view/details.page.dart` — mostra `name`, `status`,
+		`species` e informações adicionais (id, type, gender, origin, location,
+		episódios e data de criação).
+
+Essa separação mantém a lógica (requisições, tratamento de erro e estado)
+fora das widgets, o que facilita testes e explicação do fluxo.
+
+## Alterações principais deste commit
+
+- Estrutura de pastas organizada para seguir MVVM (views dentro de `view/`).
+- Adicionado campo de busca por nome e paginação/scroll infinito na Home.
+- `DetailsPage` ampliada para exibir mais informações do personagem.
+- `CharacterService` atualizado para aceitar parâmetros `page` e `name`.
+- `HomeViewModel` implementa lógica de paginação, busca e estados (loading/error).
+- Arquivos e exports limpos; removidos helpers/arquivos não utilizados.
+- `lib/config/app.config.dart` preenchido com `AppConfig` simples.
+- Adicionados testes:
+	- `test/models_test.dart` — testes unitários de parsing JSON (models/api response).
+	- `test/widget_test.dart` — testes de widget para `CardCharacterWidget` e
+		`DetailsPage`.
+
+## Como rodar os testes
+
+No PowerShell, na raiz do projeto:
+
+```powershell
+flutter test
+```
+
+Para rodar com cobertura:
+
+```powershell
+flutter test --coverage
+```
+
+## Observações rápidas
+
+- O `appConfig` está disponível em `lib/config/app.config.dart` e pode ser usado
+	para controlar comportamentos por ambiente (ex.: `appConfig.showDebugBanner`).
+- Se desejar, posso migrar a injeção de dependências do `HomeViewModel` para
+	`riverpod` (já incluso no `pubspec.yaml`) para tornar os testes do ViewModel
+	mais isolados e fáceis de mockar.
+
+
+
+## Como executar (Windows / PowerShell)
+
+1. Instale dependências:
+
+```powershell
+flutter pub get
+```
+
+2. Execute o app (dispositivo conectado ou emulador):
+
+```powershell
+flutter run
+```
+
+3. Analisar o código (opcional):
+
+```powershell
+flutter analyze
+```

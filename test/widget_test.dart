@@ -1,30 +1,48 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:desafio1_fteam/features/details/view/details.page.dart';
+import 'package:desafio1_fteam/shared/models/character.model.dart';
+import 'package:desafio1_fteam/shared/widgets/card_character.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:desafio1_fteam/main.dart';
+CharacterModel _sampleCharacter() => CharacterModel(
+  id: 1,
+  name: 'Rick Sanchez',
+  status: 'Alive',
+  species: 'Human',
+  type: '',
+  gender: 'Male',
+  origin: Ref(name: 'Earth (C-137)', url: ''),
+  location: Ref(name: 'Citadel of Ricks', url: ''),
+  image: '',
+  episode: ['https://rickandmortyapi.com/api/episode/1'],
+  url: 'https://rickandmortyapi.com/api/character/1',
+  created: DateTime.tryParse('2017-11-04T18:48:46.250Z'),
+);
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('CardCharacterWidget displays name', (WidgetTester tester) async {
+    final character = _sampleCharacter();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: CardCharacterWidget(character: character)),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('Rick Sanchez'), findsOneWidget);
+    expect(find.byType(CardCharacterWidget), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('DetailsPage shows main fields', (WidgetTester tester) async {
+    final character = _sampleCharacter();
+
+    await tester.pumpWidget(
+      MaterialApp(home: DetailsPage(character: character)),
+    );
+
+    expect(find.text('Rick Sanchez'), findsWidgets);
+
+    expect(find.text('Alive'), findsOneWidget);
+    expect(find.text('Human'), findsOneWidget);
   });
 }
