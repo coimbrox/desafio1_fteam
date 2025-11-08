@@ -1,4 +1,5 @@
 import 'package:desafio1_fteam/shared/models/character.model.dart';
+import 'package:desafio1_fteam/shared/widgets/info_row.widget.dart';
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatelessWidget {
@@ -108,20 +109,18 @@ class DetailsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildRow(context, 'ID', character.id.toString()),
-                    _buildRow(
-                      context,
-                      'Type',
-                      character.type.isNotEmpty ? character.type : '-',
+                    InfoRow(title: 'ID', value: character.id.toString()),
+                    InfoRow(
+                      title: 'Type',
+                      value: character.type.isNotEmpty ? character.type : '-',
                     ),
-                    _buildRow(context, 'Species', character.species),
-                    _buildRow(context, 'Gender', character.gender),
-                    _buildRow(context, 'Origin', character.origin.name),
-                    _buildRow(context, 'Location', character.location.name),
-                    _buildRow(
-                      context,
-                      'Created',
-                      _formatCreated(character.created),
+                    InfoRow(title: 'Species', value: character.species),
+                    InfoRow(title: 'Gender', value: character.gender),
+                    InfoRow(title: 'Origin', value: character.origin.name),
+                    InfoRow(title: 'Location', value: character.location.name),
+                    InfoRow(
+                      title: 'Created',
+                      value: _formatCreated(character.created),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -136,28 +135,6 @@ class DetailsPage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildRow(BuildContext context, String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 110,
-            child: Text(
-              '$title:',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(value, style: Theme.of(context).textTheme.bodyLarge),
-          ),
-        ],
       ),
     );
   }
