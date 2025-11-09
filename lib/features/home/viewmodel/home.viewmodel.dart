@@ -1,25 +1,76 @@
 import 'package:desafio1_fteam/shared/models/character.model.dart';
 import 'package:desafio1_fteam/shared/services/character.service.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel() {
+    _initControllers();
     loadCharacters(reset: true);
   }
 
+  // Controllers
+  late final ScrollController scrollController;
+  late final TextEditingController searchController;
+
+  // Internal state
   final List<CharacterModel> _characters = [];
-  List<CharacterModel> get characters => List.unmodifiable(_characters);
-
   bool _loading = false;
-  bool get loading => _loading;
-
   String? _error;
-  String? get error => _error;
-
   int _currentPage = 1;
   int _totalPages = 1;
   bool _isLoadingMore = false;
   String _query = '';
+  String _searchText = '';
+  static const _scrollThreshold = 200.0;
+
+  // Getters
+  List<CharacterModel> get characters => List.unmodifiable(_characters);
+  bool get loading => _loading;
+  String? get error => _error;
+  String get searchText => _searchText;
+
+  void _initControllers() {
+    scrollController = ScrollController()..addListener(_onScroll);
+    searchController = TextEditingController(text: _searchText)
+      ..addListener(() {
+        final text = searchController.text;
+        if (text != _searchText) {
+          onSearchTextChanged(text);
+        }
+      });
+  }
+
+  void _onScroll() {
+    if (!scrollController.hasClients) return;
+    final maxScroll = scrollController.position.maxScrollExtent;
+    final current = scrollController.position.pixels;
+    if (maxScroll - current <= _scrollThreshold) {
+      loadNextPage();
+    }
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void onSearchTextChanged(String text) {
+    _searchText = text;
+    notifyListeners();
+  }
+
+  void clearSearch() {
+    _searchText = '';
+    searchController.text = '';
+    setQuery('');
+  }
+
+  void submitSearch() {
+    setQuery(_searchText);
+  }
 
   int get currentPage => _currentPage;
   int get totalPages => _totalPages;

@@ -11,35 +11,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final HomeViewModel vm;
-  late final ScrollController _scrollController;
-  late final TextEditingController _searchController;
-
   @override
   void initState() {
     super.initState();
     vm = HomeViewModel();
     vm.addListener(_onVmChanged);
-    _scrollController = ScrollController()..addListener(_onScroll);
-    _searchController = TextEditingController();
   }
 
   @override
   void dispose() {
     vm.removeListener(_onVmChanged);
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    _searchController.dispose();
+    vm.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final threshold = 200.0;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final current = _scrollController.position.pixels;
-    if (maxScroll - current <= threshold) {
-      vm.loadNextPage();
-    }
   }
 
   void _onVmChanged() => setState(() {});
@@ -54,25 +37,22 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(
-              controller: _searchController,
+              controller: vm.searchController,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
                 hintText: 'Buscar por nome',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
+                suffixIcon: vm.searchText.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          vm.setQuery('');
-                        },
+                        onPressed: vm.clearSearch,
                       )
                     : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onSubmitted: (value) => vm.setQuery(value),
+              onSubmitted: (_) => vm.submitSearch(),
             ),
           ),
           // List area
@@ -117,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                   }
 
                   return ListView.builder(
-                    controller: _scrollController,
+                    controller: vm.scrollController,
                     padding: const EdgeInsets.all(16),
                     itemCount:
                         vm.characters.length + (vm.isLoadingMore ? 1 : 0),
